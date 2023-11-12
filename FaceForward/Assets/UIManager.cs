@@ -91,6 +91,10 @@ public class UIManager : MonoBehaviour
     public Button closeButton2;
     public Button closeButton3;
     public Button closeButton4;
+    public Slider sleepSlider;
+    public Slider cupSlider;
+    public TMP_Text sleepText;
+    public TMP_Text cupText;
 
     // shop vars
     private Tuple<int, int> toAddShelfLoc;
@@ -152,6 +156,10 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
+        sleepSlider.onValueChanged.AddListener(updateSleepText);
+        updateSleepText(sleepSlider.value);
+        cupSlider.onValueChanged.AddListener(updateCupText);
+        updateCupText(sleepSlider.value);
 
         products = new List<ProductDetails>();
         products.Add(new ProductDetails("Cleanser", "La Roche Posay", "Hydrating Gentle Cleanser", bottleSprites[0]));
@@ -195,6 +203,18 @@ public class UIManager : MonoBehaviour
         UpdateButtonAppearance(homePage);
     }
 
+    void updateSleepText(float value)
+    {
+        // Map the value to the range 0-8 and round to an integer
+        int hours = Mathf.RoundToInt(value * 8);
+        sleepText.text = hours + " hours";
+    }
+    void updateCupText(float value)
+    {
+        // Map the value to the range 0-8 and round to an integer
+        int hours = Mathf.RoundToInt(value * 8);
+        cupText.text = hours + " cups";
+    }
     private void finishedLoggingRoutine(int routineToLog)
     {
         SwitchPage(diaryPage);
@@ -318,7 +338,9 @@ public class UIManager : MonoBehaviour
                 product.GetComponent<Image>().sprite = bottleSprites[bottlesEasy[shelfNum][i]];
 
                 GameObject checkbox = FindDeepChild(stepParent.GetComponent<Transform>(), "check");
-                checkbox.GetComponent<Button>().onClick.AddListener(() => checkboxLol(checkbox));
+                Debug.Log("adding checkbox listener");
+                GameObject tempCheckBox = checkbox;
+                checkbox.GetComponent<Button>().onClick.AddListener(() => checkboxLol(tempCheckBox));
             }
         }
     }
