@@ -283,6 +283,10 @@ public class UIManager : MonoBehaviour
         Debug.Log("setting toAddShelfLoc as " + shelf + ", " + shelfSpot);
 
         toAddShelfLoc = new Tuple<int, int>(shelf, shelfSpot);
+
+        TMP_InputField input = Shop.GetComponentInChildren<TMP_InputField>();
+        input.text = "";
+
         Shop.SetActive(true);
         slideShopAnimator.SetTrigger("SlideLeft");
 
@@ -338,11 +342,15 @@ public class UIManager : MonoBehaviour
                 product.GetComponent<Image>().sprite = bottleSprites[bottlesEasy[shelfNum][i]];
 
                 GameObject checkbox = FindDeepChild(stepParent.GetComponent<Transform>(), "check");
-                Debug.Log("adding checkbox listener");
+                Debug.Log("adding checkbox listener for " + routineName.GetComponent<TMP_Text>().text);
                 GameObject tempCheckBox = checkbox;
-                checkbox.GetComponent<Button>().onClick.AddListener(() => checkboxLol(tempCheckBox));
+                checkbox.GetComponent<Button>().onClick.RemoveAllListeners();
+                checkbox.GetComponent<Image>().sprite = uncheckedCheckbox;
+                checkbox.GetComponent<Button>().onClick.AddListener(() => checkboxLol(checkbox));
             }
         }
+        ScrollRect scrollRect = FindDeepChild(routinePage.GetComponent<Transform>(), "Scroll").GetComponent<ScrollRect>();
+        scrollRect.verticalNormalizedPosition = 1;
     }
     private void checkboxLol(GameObject checkbox)
     {
