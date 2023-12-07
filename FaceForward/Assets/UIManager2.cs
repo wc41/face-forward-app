@@ -11,7 +11,7 @@ using UnityEditor;
 using System.Collections;
 using System.Diagnostics;
 
-public class UIManager : MonoBehaviour
+public class UIManager2 : MonoBehaviour
 {
     public GameObject shelfPage;
     public GameObject diaryPage;
@@ -32,29 +32,7 @@ public class UIManager : MonoBehaviour
     public Button diaryButton;
     public Button shelfButton;
     public Button homeButton;
-
-    // calendar variables
     public Button createLogFromDiaryButton;
-    public GameObject calArrowExpandObject;
-    public GameObject calArrowCloseObject;
-    public Button calArrowExpand;
-    public Button calArrowRight;
-    public Button calArrowLeft;
-    public Button calArrowClose;
-    public GameObject octCalMin;
-    public GameObject octCalMin2;
-    public GameObject sepCalMin4;
-    public GameObject octCalMax;
-    public GameObject sepCalMin;
-    public GameObject sepCalMax;
-    public GameObject novCalMin;
-    public GameObject novCalMax;
-    public GameObject monthName;
-    public GameObject gradientHome;
-    public GameObject gradientHomeExpanded;
-    private string month;
-    private string week;
-    private bool isWeek;
 
     // okay
     public GameObject dailySkinLog;
@@ -197,7 +175,6 @@ public class UIManager : MonoBehaviour
 
         shelfShopSetup();
         questionnaireSetup();
-        calendarSetup();
         moodSetup(-1);
         initializeMoodButtons();
 
@@ -683,26 +660,6 @@ public class UIManager : MonoBehaviour
         neutralButton.GetComponent<Image>().sprite = neutralButtonUnfilled;
         goodButton.GetComponent<Image>().sprite = goodButtonUnfilled;
         greatButton.GetComponent<Image>().sprite = greatButtonUnfilled;
-    }
-
-    private void calendarSetup()
-    {
-        month = "oct";
-        week = "oct1";
-        isWeek = true;
-
-        octCalMin = FindDeepChild(diaryPage.GetComponent<Transform>(), "octCalMin");
-        octCalMin2 = FindDeepChild(diaryPage.GetComponent<Transform>(), "octCalMin2");
-        sepCalMin4 = FindDeepChild(diaryPage.GetComponent<Transform>(), "calSepMin4");
-        octCalMax = FindDeepChild(diaryPage.GetComponent<Transform>(), "octCalMax");
-        sepCalMin = FindDeepChild(diaryPage.GetComponent<Transform>(), "septCalMin");
-        sepCalMax = FindDeepChild(diaryPage.GetComponent<Transform>(), "septCalMax");
-        novCalMin = FindDeepChild(diaryPage.GetComponent<Transform>(), "novCalMin");
-        novCalMax = FindDeepChild(diaryPage.GetComponent<Transform>(), "novCalMax");
-        monthName = FindDeepChild(diaryPage.GetComponent<Transform>(), "monthName");
-
-        gradientHome = FindDeepChild(diaryPage.GetComponent<Transform>(), "gradientHome");
-        gradientHomeExpanded = FindDeepChild(diaryPage.GetComponent<Transform>(), "gradientHomeExpanded");
     }
 
     private void activateObj(GameObject gameObject)
