@@ -21529,7 +21529,7 @@ GameObject:
   - component: {fileID: 785206566}
   - component: {fileID: 785206565}
   m_Layer: 0
-  m_Name: productInfoBox
+  m_Name: InsightsImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44086,6 +44086,7 @@ MonoBehaviour:
   homeButton: {fileID: 309014972}
   openInsightsBtn: {fileID: 1452470374}
   closeInsightsBtn: {fileID: 356193831}
+  toggleTimeBtn: {fileID: 261459410}
   insightSprites:
   - {fileID: 21300000, guid: f25312cd613a203479db47002e1c1178, type: 3}
   - {fileID: 21300000, guid: dd32bdd8e08f94f4db95607462de6c5c, type: 3}
