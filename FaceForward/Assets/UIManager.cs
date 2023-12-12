@@ -24,6 +24,7 @@ public class UIManager : MonoBehaviour
     public GameObject ShopInfo;
     public GameObject SelectRoutine;
     public GameObject routinePage;
+    public GameObject insightsPage;
 
     public TMP_Text diaryButtonText;
     public TMP_Text shelfButtonText;
@@ -33,33 +34,16 @@ public class UIManager : MonoBehaviour
     public Button shelfButton;
     public Button homeButton;
 
-    // calendar variables
-    public Button createLogFromDiaryButton;
-    public GameObject calArrowExpandObject;
-    public GameObject calArrowCloseObject;
-    public Button calArrowExpand;
-    public Button calArrowRight;
-    public Button calArrowLeft;
-    public Button calArrowClose;
-    public GameObject octCalMin;
-    public GameObject octCalMin2;
-    public GameObject sepCalMin4;
-    public GameObject octCalMax;
-    public GameObject sepCalMin;
-    public GameObject sepCalMax;
-    public GameObject novCalMin;
-    public GameObject novCalMax;
-    public GameObject monthName;
-    public GameObject gradientHome;
-    public GameObject gradientHomeExpanded;
-    private string month;
-    private string week;
-    private bool isWeek;
+    //insights
+    public Button openInsightsBtn;
+    public Button closeInsightsBtn;
+    public Button toggleTimeBtn;
+    public Sprite[] insightSprites;
+    private Image InsightsImageToToggle;
+    private bool onWeek;
 
     // okay
     public GameObject dailySkinLog;
-    public GameObject morningRoutineLog;
-    public GameObject eveningRoutineLog;
 
     // HappySadButtons
     public Button awfulButton;
@@ -136,6 +120,9 @@ public class UIManager : MonoBehaviour
     public Animator[] pageDownAnimator;
     public Animator slideShopAnimator;
     public Animator slideShopInfoAnimator;
+    public Animator slideInsightsAnimator;
+
+
 
     public Animator slideSelectRoutineAnimator;
     public Animator slideRoutineAnimator;
@@ -147,6 +134,7 @@ public class UIManager : MonoBehaviour
     private Color selectedTextColor = new Color(1.0f, 0.549f, 0.659f, 1.0f); // Adjust as needed
 
     private Stopwatch stopWatch;
+
 
     public struct ProductDetails
     {
@@ -164,14 +152,8 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    private void Start()
+    private void productsSetup()
     {
-        stopWatch = new Stopwatch();
-        sleepSlider.onValueChanged.AddListener(updateSleepText);
-        updateSleepText(sleepSlider.value);
-        cupSlider.onValueChanged.AddListener(updateCupText);
-        updateCupText(sleepSlider.value);
-
         products = new List<ProductDetails>();
         products.Add(new ProductDetails("Cleanser", "La Roche Posay", "Hydrating Gentle Cleanser", bottleSprites[0]));
         products.Add(new ProductDetails("Cleanser", "CeraVe", "Foaming Facial Cleanser", bottleSprites[1]));
@@ -180,24 +162,59 @@ public class UIManager : MonoBehaviour
         products.Add(new ProductDetails("Sunscreen", "Round Lab", "Birch Moisturizing Sunscreen SPF 50+", bottleSprites[4]));
         products.Add(new ProductDetails("Moisturizer", "innisfree", "Deju Glow Tone-up Cream with Jeju Cherry Blossom", bottleSprites[5]));
 
-        morningRoutineLog.SetActive(false);
-        eveningRoutineLog.SetActive(false);
+    }
+
+    private void logRoutineSetup()
+    {
         leaveSelectRoutineButton.onClick.AddListener(leaveSelectRoutine);
         leaveRoutinePageButton.onClick.AddListener(leaveRoutinePage);
         beginLogRoutineButton.onClick.AddListener(goToSelectRoutine);
+
         Button[] selectRoutineButtons =
             FindDeepChild(SelectRoutine.GetComponent<Transform>(), "Routines").GetComponentsInChildren<Button>();
         for (int i = 0; i < selectRoutineButtons.Length; i++)
         {
             int tempi = i;
 
-            selectRoutineButtons[tempi].onClick.AddListener(()=>goToRoutinePage(tempi));
+            selectRoutineButtons[tempi].onClick.AddListener(() => goToRoutinePage(tempi));
         }
         finalLogRoutineButton.onClick.AddListener(() => finishedLoggingRoutine(pageOpen));
+    }
 
+    private void toggleTime()
+    {
+        if (onWeek)
+        {
+            onWeek = false;
+            toggleTimeBtn.GetComponent<Image>().sprite = insightSprites[0];
+            InsightsImageToToggle.sprite = insightSprites[2];
+        }
+        else
+        { 
+            onWeek = true;
+            toggleTimeBtn.GetComponent<Image>().sprite = insightSprites[1];
+            InsightsImageToToggle.sprite = insightSprites[3];
+        }
+
+    }
+    private void Start()
+    {
+        onWeek = false;
+        openInsightsBtn.onClick.AddListener(openInsights);
+        closeInsightsBtn.onClick.AddListener(closeInsights);
+        toggleTimeBtn.onClick.AddListener(toggleTime);
+        InsightsImageToToggle = FindDeepChild(insightsPage.GetComponent<Transform>(), "InsightsImage").GetComponent<Image>();
+
+        stopWatch = new Stopwatch();
+        sleepSlider.onValueChanged.AddListener(updateSleepText);
+        updateSleepText(sleepSlider.value);
+        cupSlider.onValueChanged.AddListener(updateCupText);
+        updateCupText(sleepSlider.value);
+
+        productsSetup();
+        logRoutineSetup();
         shelfShopSetup();
         questionnaireSetup();
-        calendarSetup();
         moodSetup(-1);
         initializeMoodButtons();
 
@@ -205,7 +222,6 @@ public class UIManager : MonoBehaviour
         shelfButtonText = shelfButton.GetComponentInChildren<TMP_Text>();
         homeButtonText = homeButton.GetComponentInChildren<TMP_Text>();
 
-        // Subscribe to button click events
         diaryButton.onClick.AddListener(() => SwitchPage(diaryPage));
         shelfButton.onClick.AddListener(() => SwitchPage(shelfPage));
         homeButton.onClick.AddListener(() => SwitchPage(homePage));
@@ -231,11 +247,11 @@ public class UIManager : MonoBehaviour
         SwitchPage(diaryPage);
         if (routineToLog == 0)
         {
-            morningRoutineLog.SetActive(true);
+            //morningRoutineLog.SetActive(true);
         }
         if (routineToLog == 1)
         {
-            eveningRoutineLog.SetActive(true);
+            //eveningRoutineLog.SetActive(true);
         }
     }
     private void shelfShopSetup()
@@ -313,6 +329,11 @@ public class UIManager : MonoBehaviour
 
     }
 
+    private void openInsights()
+    {
+        insightsPage.SetActive(true);
+        slideInsightsAnimator.SetTrigger("SlideUpInsights");
+    }
     private void openInfoBox(int productNum)
     {
         FindDeepChild(ShopInfo.GetComponent<Transform>(), "bottleSprite").GetComponent<Image>().sprite = products[productNum].sprite;
@@ -325,6 +346,15 @@ public class UIManager : MonoBehaviour
         slideShopInfoAnimator.SetTrigger("SlideUp");
     }
 
+    private void closeInsights()
+    {
+        slideInsightsAnimator.SetTrigger("SlideDownInsights");
+        Invoke("DisableInsights", 0.4f);
+    }
+    private void DisableInsights()
+    {
+        insightsPage.SetActive(false);
+    }
     private void closeInfoScreen()
     {
         slideShopInfoAnimator.SetTrigger("SlideDown");
@@ -685,26 +715,6 @@ public class UIManager : MonoBehaviour
         greatButton.GetComponent<Image>().sprite = greatButtonUnfilled;
     }
 
-    private void calendarSetup()
-    {
-        month = "oct";
-        week = "oct1";
-        isWeek = true;
-
-        octCalMin = FindDeepChild(diaryPage.GetComponent<Transform>(), "octCalMin");
-        octCalMin2 = FindDeepChild(diaryPage.GetComponent<Transform>(), "octCalMin2");
-        sepCalMin4 = FindDeepChild(diaryPage.GetComponent<Transform>(), "calSepMin4");
-        octCalMax = FindDeepChild(diaryPage.GetComponent<Transform>(), "octCalMax");
-        sepCalMin = FindDeepChild(diaryPage.GetComponent<Transform>(), "septCalMin");
-        sepCalMax = FindDeepChild(diaryPage.GetComponent<Transform>(), "septCalMax");
-        novCalMin = FindDeepChild(diaryPage.GetComponent<Transform>(), "novCalMin");
-        novCalMax = FindDeepChild(diaryPage.GetComponent<Transform>(), "novCalMax");
-        monthName = FindDeepChild(diaryPage.GetComponent<Transform>(), "monthName");
-
-        gradientHome = FindDeepChild(diaryPage.GetComponent<Transform>(), "gradientHome");
-        gradientHomeExpanded = FindDeepChild(diaryPage.GetComponent<Transform>(), "gradientHomeExpanded");
-    }
-
     private void activateObj(GameObject gameObject)
     {
         if (gameObject != null)
@@ -746,6 +756,7 @@ public class UIManager : MonoBehaviour
         SkinLog4.SetActive(false);
         Shop.SetActive(false);
         ShopInfo.SetActive(false);
+        insightsPage.SetActive(false);
         SelectRoutine.SetActive(false);
         routinePage.SetActive(false);
 
@@ -754,7 +765,6 @@ public class UIManager : MonoBehaviour
 
         if (pageToActivate == diaryPage && !areDiaryButtonListenersAdded)
         {
-            createLogFromDiaryButton.onClick.AddListener(() => SwitchPage(homePage));
             areDiaryButtonListenersAdded = true;
         }
 

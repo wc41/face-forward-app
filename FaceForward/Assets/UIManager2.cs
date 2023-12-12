@@ -142,6 +142,8 @@ public class UIManager2 : MonoBehaviour
         }
     }
 
+
+
     private void Start()
     {
         stopWatch = new Stopwatch();
