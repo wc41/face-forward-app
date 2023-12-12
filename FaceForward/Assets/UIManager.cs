@@ -42,6 +42,20 @@ public class UIManager : MonoBehaviour
     private Image InsightsImageToToggle;
     private bool onWeek;
 
+    //add shelf stuff
+    public GameObject shelf3;
+    public GameObject shelf4;
+    private bool shelf3Opened;
+    private bool shelf4Opened;
+    public Button addRoutineBtn;
+
+    public GameObject newRoutineToLog;
+    public GameObject newRoutine2ToLog;
+
+    // diary buttons
+    public Sprite[] routineLogSprites;
+    private Image routineLogImageToToggle;
+
     // okay
     public GameObject dailySkinLog;
 
@@ -127,6 +141,7 @@ public class UIManager : MonoBehaviour
     public Animator slideSelectRoutineAnimator;
     public Animator slideRoutineAnimator;
 
+
     public List<ProductDetails> products;
 
     // Text colors
@@ -172,6 +187,8 @@ public class UIManager : MonoBehaviour
 
         Button[] selectRoutineButtons =
             FindDeepChild(SelectRoutine.GetComponent<Transform>(), "Routines").GetComponentsInChildren<Button>();
+
+        UnityEngine.Debug.Log("select routine button count = " + selectRoutineButtons.Length);
         for (int i = 0; i < selectRoutineButtons.Length; i++)
         {
             int tempi = i;
@@ -197,13 +214,41 @@ public class UIManager : MonoBehaviour
         }
 
     }
+
+    private void addRoutine()
+    {
+        if (!shelf3Opened)
+        {
+            shelf3Opened = true;
+            shelf3.SetActive(true);
+            RectTransform shelvesPanelTransform = FindDeepChild(shelfPage.GetComponent<Transform>(), "Panel").GetComponent(typeof(RectTransform)) as RectTransform;
+            shelvesPanelTransform.sizeDelta =
+                new Vector2(shelvesPanelTransform.sizeDelta.x, shelvesPanelTransform.sizeDelta.y + 662);
+        }
+        else if (shelf3Opened && !shelf4Opened)
+        {
+            shelf4Opened = true;
+            shelf4.SetActive(true);
+            RectTransform shelvesPanelTransform = FindDeepChild(shelfPage.GetComponent<Transform>(), "Panel").GetComponent(typeof(RectTransform)) as RectTransform;
+            shelvesPanelTransform.sizeDelta =
+                new Vector2(shelvesPanelTransform.sizeDelta.x, shelvesPanelTransform.sizeDelta.y + 662);
+        }
+    }
     private void Start()
     {
+        addRoutineBtn.onClick.AddListener(addRoutine);
+        shelf3.SetActive(false);
+        shelf4.SetActive(false);
+        shelf3Opened = false;
+        shelf4Opened = false;
+
         onWeek = false;
         openInsightsBtn.onClick.AddListener(openInsights);
         closeInsightsBtn.onClick.AddListener(closeInsights);
         toggleTimeBtn.onClick.AddListener(toggleTime);
         InsightsImageToToggle = FindDeepChild(insightsPage.GetComponent<Transform>(), "InsightsImage").GetComponent<Image>();
+        routineLogImageToToggle = FindDeepChild(diaryPage.GetComponent<Transform>(), "MoodToday").GetComponent<Image>();
+        routineLogImageToToggle.sprite = routineLogSprites[0];
 
         stopWatch = new Stopwatch();
         sleepSlider.onValueChanged.AddListener(updateSleepText);
@@ -245,14 +290,7 @@ public class UIManager : MonoBehaviour
     private void finishedLoggingRoutine(int routineToLog)
     {
         SwitchPage(diaryPage);
-        if (routineToLog == 0)
-        {
-            //morningRoutineLog.SetActive(true);
-        }
-        if (routineToLog == 1)
-        {
-            //eveningRoutineLog.SetActive(true);
-        }
+        routineLogImageToToggle.sprite = routineLogSprites[1];
     }
     private void shelfShopSetup()
     {
@@ -411,6 +449,14 @@ public class UIManager : MonoBehaviour
         {
             routineName.GetComponent<TMP_Text>().text = "Evening Routine";
         }
+        if (shelfNum == 2)
+        {
+            routineName.GetComponent<TMP_Text>().text = "New Routine";
+        }
+        if (shelfNum == 3)
+        {
+            routineName.GetComponent<TMP_Text>().text = "New Routine 2";
+        }
 
         List<GameObject> steps = GetChildren(FindDeepChild(routinePage.GetComponent<Transform>(), "StepsGroup"));
         for (int i = 0; i < steps.Count; i++)
@@ -465,7 +511,26 @@ public class UIManager : MonoBehaviour
 
     private void goToSelectRoutine()
     {
+
         SelectRoutine.SetActive(true);
+        RectTransform routinesPanelTransform = FindDeepChild(SelectRoutine.GetComponent<Transform>(), "Panel").GetComponent(typeof(RectTransform)) as RectTransform;
+        routinesPanelTransform.sizeDelta =
+            new Vector2(1127.5f, 1765.4f);
+        newRoutineToLog.SetActive(false);
+        newRoutine2ToLog.SetActive(false);
+
+        if (shelf3Opened)
+        {
+            routinesPanelTransform.sizeDelta =
+                new Vector2(1127.5f, 1765.4f + 409);
+            newRoutineToLog.SetActive(true);
+            if (shelf4Opened)
+            {
+                newRoutine2ToLog.SetActive(true);
+                routinesPanelTransform.sizeDelta =
+                    new Vector2(1127.5f, 1765.4f + 409+409);
+            }
+        }
         slideSelectRoutineAnimator.SetTrigger("SlideLeft");
     }
     private void leaveSelectRoutine()
