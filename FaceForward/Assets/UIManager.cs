@@ -144,6 +144,8 @@ public class UIManager : MonoBehaviour
 
     public List<ProductDetails> products;
 
+    public GameObject header;
+
     // Text colors
     private Color normalTextColor = Color.black; // Adjust as needed
     private Color selectedTextColor = new Color(1.0f, 0.549f, 0.659f, 1.0f); // Adjust as needed
@@ -236,6 +238,8 @@ public class UIManager : MonoBehaviour
     }
     private void Start()
     {
+        header.GetComponent<TextMeshProUGUI>().text = "Today is " + DateTime.Now.ToString("MMMM d, yyyy");
+
         addRoutineBtn.onClick.AddListener(addRoutine);
         shelf3.SetActive(false);
         shelf4.SetActive(false);
@@ -305,7 +309,7 @@ public class UIManager : MonoBehaviour
             bottles.Add(new List<List<GameObject>>());
             shelves[i] = FindDeepChild(shelfPage.GetComponent<Transform>(), "RoutineGroup").transform.GetChild(i).gameObject;
         }
-        for (int i = 0; i < shelves.Length; i++)
+        for (int i = 1; i < shelves.Length; i++)
         {
             bottles[i].Add(GetChildren(FindDeepChild(shelves[i].GetComponent<Transform>(), "addBottles")));
             bottles[i].Add(GetChildren(FindDeepChild(shelves[i].GetComponent<Transform>(), "realBottles")));
